@@ -11,20 +11,26 @@ public class UserController {
 
     private final UserRepository userRepository;
 
+    //private final UserServices userServices;
+
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
+        //this.userServices = userServices;
     }
 
     @GetMapping("/users")
-    Iterable<User> getAllUsers(){return userRepository.findAll();}
+    public Iterable<User> getAllUsers(){
+        System.out.println("quiiiiiiiii");
+        return userRepository.findAll();
+    }
 
     @PostMapping("/users")
-    User createNewUser(@RequestBody User newUser){
+    public User createNewUser(@RequestBody User newUser){
         return userRepository.save(newUser);
     }
 
-    @PutMapping("/users/{id}")
-    User updateUser(@RequestParam Long id, @RequestBody User userDto){
+    @PutMapping("/users")
+    public User updateUser(@RequestParam Long id, @RequestBody User userDto){
 
         User userToUpdate = userRepository.findById(id).orElseThrow();   // va bene gestire così l'eccezione??
         userToUpdate.setNome(userDto.getNome());
@@ -35,17 +41,18 @@ public class UserController {
         return userRepository.save(userToUpdate);
     }
 
-    @DeleteMapping("/users/{userId}")
-    void deleteUser(@RequestParam Long userId){
+    @DeleteMapping("/users")
+    public void deleteUser(@RequestParam Long id){
         //userRepository.deleteById(userId);
         //oppure
-        User userToDelete = userRepository.findById(userId).orElseThrow();
+        User userToDelete = userRepository.findById(id).orElseThrow();
         //userRepository.deleteById();
         userRepository.delete(userToDelete);
     }
 
-    @GetMapping("/users/{nome}{cognome}") //QueryParam
-    List<User> getUsersSearched(@RequestParam String nome, @RequestParam String cognome){
+    @GetMapping("/users/") //QueryParam
+    public List<User> getUsersSearched(@RequestParam String nome, @RequestParam String cognome){
+        System.out.println(nome + cognome);
         List<User> selectedUsers = userRepository.findByNomeAndCognome(nome, cognome);
 
         if(!selectedUsers.isEmpty())
@@ -55,4 +62,5 @@ public class UserController {
                     HttpStatus.NOT_FOUND, "entity not found"
             );
     }
+
 }
